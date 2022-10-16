@@ -1,54 +1,61 @@
 #include "sort.h"
 
 /**
- * shell_sort - sorts an array of intgers in ascending order
- * @array: array of integers
- * @size: size of the array
- * Return: sorted array
+ * swap_shell - swaps integers with insertion form based on gap
+ * @check: the index of integer to check
+ * @prev: index of previous integer in array that is larger than the check
+ * @gap: gap to rotate check and prev
+ * @a: the array for referencing indexes
  */
- void shell_sort(int *array, size_t size)
- {
-    size_t i, j, element = 0, temp;
-    for ( ; element < array[size -1]; element++)
-    {
-        
-        for (i = element; i < size; i += 1)
-        {
-            temp = array[i];
-            for (j = i; (j >= element) && (array[j - element] > temp); j -= element)
-            {
-                array[j] = array[j - element];
-            }
-            array[j] = temp;
-        }
-        print_array(array, size);
-    }
-}
- void print_array(const int *array, size_t size)
+void swap_shell(int check, int prev, int gap, int *a)
 {
-    size_t i;
+	int temp;
 
-    i = 0;
-    while (array && i < size)
-    {
-        if (i > 0)
-            printf(", ");
-        printf("%d", array[i]);
-        ++i;
-    }
-    printf("\n");
+	while (prev >= 0 && a[check] < a[prev])
+	{
+		temp = a[prev];
+
+		a[prev] = a[check];
+
+		a[check] = temp;
+
+		check -= gap;
+		prev -= gap;
+	}
 }
 
- int main(void)
- {
-    int array[]={49, 23, 56, 79, 89, 99, 70, 12, 7, 101, 203, 4};
-    size_t n = sizeof(array) / sizeof(array[0]);
+/**
+ * shell_sort - sorts list with shell sort method
+ * @array: input list to sort
+ * @size: lenth/ size of input array
+ */
+void shell_sort(int *array, size_t size)
+{
+	int gap;
+	size_t check, prev;
 
-    print_array(array, n);
-    printf("\n");
-    shell_sort(array, n);
-    printf("\n");    
-    print_array(array, n);
-    return (0);
-    
+	if (array && size > 1)
+	{
+		for (gap = 1; gap * 3 + 1 < (int)size; gap = gap * 3 + 1)
+			;
+		prev = 0;
+		check = prev + gap;
+		while (check < size)
+		{
+			if (array[check] < array[prev])
+				swap_shell(check, prev, gap, array);
+			prev++;
+			check++;
+			if (check >= size)
+			{
+				print_array(array, size);
+				if (gap > 1)
+				{
+					gap = (gap - 1) / 3;
+					prev = 0;
+					check = prev + gap;
+				}
+			}
+		}
+	}
 }
