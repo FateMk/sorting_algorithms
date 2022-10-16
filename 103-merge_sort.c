@@ -1,88 +1,87 @@
 #include "sort.h"
 
 /**
-  * sort - divides array in half recursively, until the array is size 1
-  * @start: start of the subarrray to be divided
-  * @end: end of the subarray to be divded
-  * @a: the original array for reference
-  * @copy: copy of the original array to help sort
-  */
-void sort(int start, int end, int *a, int *copy)
+ * TDMerge - sorts and merges the sub arrays in source
+ * @start: starting index (inclusive) for the left sub array
+ * @middle: end index (exclusive) for the left sub array and
+ * starting index (inclusive) for the right sub array
+ * @end: end index (exclusive) for the right sub array
+ * @dest: destination for data
+ * @source: source of data
+ *
+ * Return: void
+ */
+void TDMerge(size_t start, size_t middle, size_t end, int *dest, int *source)
 {
-	int middle;
+	size_t i, j, k;
 
-	if (start < end)
-	{
-		middle = (start + end) / 2;
-		if ((start + end) % 2 == 0)
-			middle--;
-		sort(start, middle, a, copy);
-		sort(middle + 1, end, a, copy);
-		merge(start, end, a, copy);
-	}
-}
-/**
-  * merge - merging of each half of an array into one sorted array
-  * @start: start of the subarray to be divided and sorted
-  * @end: end of the subarray to be divided and sorted
-  * @a: the original array for reference
-  * @copy: copy of the original array to help sort
-  */
-void merge(int start, int end, int *a, int *copy)
-{
-	int left, right, middle, tempi, tempsize;
-
-	tempsize = end - start + 1;
-	middle = ((start + end) / 2);
-	if ((start + end) % 2 == 1)
-		middle++;
-
-	/* print initiation */
 	printf("Merging...\n");
-	left = start;
 	printf("[left]: ");
-	print_array(a + left, (size_t)(middle - left));
-	right = middle;
+	print_array(source + start, middle - start);
 	printf("[right]: ");
-	print_array(a + right, (size_t)((end - middle) + 1));
-
-	tempi = 0;
-	/* initiate merge loop to populate copy array */
-	while (left < middle && right <= end)
+	print_array(source + middle, end - middle);
+	i = start;
+	j = middle;
+	for (k = start; k < end; k++)
 	{
-		if (a[left] < a[right])
-			copy[tempi++] = a[left++];
+		if (i < middle && (j >= end || source[i] <= source[j]))
+		{
+			dest[k] = source[i];
+			i++;
+		}
 		else
-			copy[tempi++] = a[right++];
+		{
+			dest[k] = source[j];
+			j++;
+		}
 	}
-	while (left < middle)
-		copy[tempi++] = a[left++];
-	while (right <= end)
-		copy[tempi++] = a[right++];
-
-	/* copies copy array into main array sorted */
-	tempi = 0;
-	left = start;
-	while (tempi < tempsize)
-		a[left++] = copy[tempi++];
-
-	/* print completion statement */
 	printf("[Done]: ");
-	print_array(a + start, tempsize);
+	print_array(dest + start, end - start);
 }
+
 /**
-  * merge_sort - sorts an array of integers ascending order with merge sort
-  * @array: the array to be sorted
-  * @size: size of the array
-  */
+ * TDSplitMerge - recursively splits the array and merges the sorted arrays
+ * @start: starting index (inclusive)
+ * @end: end index (exclusive)
+ * @array: the array to sort
+ * @copy: a copy of the array
+ *
+ * Return: void
+ */
+void TDSplitMerge(size_t start, size_t end, int *array, int *copy)
+{
+	size_t middle;
+
+	if (end - start < 2)
+		return;
+	middle = (start + end) / 2;
+	TDSplitMerge(start, middle, array, copy);
+	TDSplitMerge(middle, end, array, copy);
+	TDMerge(start, middle, end, array, copy);
+	for (middle = start; middle < end; middle++)
+		copy[middle] = array[middle];
+}
+
+/**
+ * merge_sort - sorts an array of integers in ascending order using the
+ * Merge sort algorithm
+ * @array: array to sort
+ * @size: size of the array
+ *
+ * Return: void
+ */
 void merge_sort(int *array, size_t size)
 {
+	size_t i;
 	int *copy;
 
-	if (array && size > 1)
-	{
-		copy = malloc(sizeof(int *) * size);
-		sort(0, size - 1, array, copy);
-		free(copy);
-	}
+	if (array == NULL || size < 2)
+		return;
+	copy = malloc(sizeof(int) * size);
+	if (copy == NULL)
+		return;
+	for (i = 0; i < size; i++)
+		copy[i] = array[i];
+	TDSplitMerge(0, size, array, copy);
+	free(copy);
 }
