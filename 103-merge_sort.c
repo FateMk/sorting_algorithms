@@ -1,20 +1,5 @@
 #include "sort.h"
-/**
-  * merge_sort - sorts an array of integers ascending order with merge sort
-  * @array: the array to be sorted
-  * @size: size of the array
-  */
-void merge_sort(int *array, size_t size)
-{
-	int *copy;
 
-	if (array && size > 1)
-	{
-		copy = malloc(sizeof(int *) * size);
-		sort(0, size - 1, array, copy);
-		free(copy);
-	}
-}
 /**
   * sort - divides array in half recursively, until the array is size 1
   * @start: start of the subarrray to be divided
@@ -84,4 +69,20 @@ void merge(int start, int end, int *a, int *copy)
 	/* print completion statement */
 	printf("[Done]: ");
 	print_array(a + start, tempsize);
+}
+/**
+  * merge_sort - sorts an array of integers ascending order with merge sort
+  * @array: the array to be sorted
+  * @size: size of the array
+  */
+void merge_sort(int *array, size_t size)
+{
+	int *copy;
+
+	if (array && size > 1)
+	{
+		copy = malloc(sizeof(int *) * size);
+		sort(0, size - 1, array, copy);
+		free(copy);
+	}
 }
