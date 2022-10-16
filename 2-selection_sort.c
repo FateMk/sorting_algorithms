@@ -1,30 +1,32 @@
 #include "sort.h"
-void swap(int *a, int *b)
-{
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
 
 /**
- * selection_sort - sorts an array of integer inascending order
- * @array: an array of elements
- * @size: size of the array
- * Return: sorted array
+ * selection_sort - sort an array of integers in ascending order
+ * @array: array of integers
+ * @size: size of array
  */
- void selection_sort(int *array, size_t size)
- {
-    int i, j, min;
+void selection_sort(int *array, size_t size)
+{
+	size_t i, j, min;
+	int hold;
 
-    for (i = 0; i < size -1; i++)
-    {
-        min = i;
-        for (j = i + 1; j < size; j++)
-        if (array[j] < array[min])
-        min = j;
-        swap(&array[min], &array[i]);
-        print_array(array, size);        
-    }
-    
- }
+	if (size == 0 || array == NULL)
+		return;
 
+	for (i = 0; i < size - 1; i++)
+	{
+		min = i;
+		for (j = i; j < size; j++)
+		{
+			if (array[j] < array[min])
+				min = j;
+		}
+		if (i != min)
+		{
+			hold = array[i];
+			array[i] = array[min];
+			array[min] = hold;
+			print_array(array, size);
+		}
+	}
+}
