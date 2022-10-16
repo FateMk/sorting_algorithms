@@ -1,76 +1,100 @@
 #include "sort.h"
 
-size_t swap(int *array, size_t size, size_t idx1, size_t idx2);
-void partition(int *array, size_t size, size_t left, size_t right);
-
 /**
- * quick_sort - Sort an array of integers in ascending order
- * Description: Use Hoare's partition scheme quicksort
- * pivot should always be the last element of the partition being sorted.
- * You're expected to print the array after each time you swap 2 elements.
+ * quick_sort - sorts an array with quicksort algorithm
+ * @array: array to be sorted
+ * @size: size of the array
  */
 void quick_sort(int *array, size_t size)
 {
-	size_t lw, rw;
+	int wall, pivot;
 
-	lw = 0;
-	rw = size - 1;
-
-	partition(array, size, lw, rw);
-}
-
-void partition(int *array, size_t size, size_t left, size_t right)
-{
-	size_t i, j, pivot;
-
-	printf("?");
-
-	if (left >= right)
+	if (array && size > 1)
 	{
-		printf("Hi");
-		return;
+		wall = 0;
+		pivot = (size - 1);
+
+		quick_sort_dup(wall, pivot, array, size);
 	}
+}
+/**
+ * quick_sort_dup - recursively (divide & conquer) partition and repeat
+ * @wall: beginning of sub array to sort
+ * @pivot: end of sub array to sort and pivot point
+ * @a: the beginning of the array, for printing purposes
+ * @s: size of entire array for printing
+ */
+void quick_sort_dup(int wall, int pivot, int *a, size_t s)
+{
+	int first_wall, second_wall, new_pivot;
 
-	pivot = right;
-	while (array[i] < array[pivot] && i < pivot)
-		i++;
-
-	if (i < right)
+	if (wall < pivot)
 	{
-		printf("A");
-		pivot = swap(array, size, i, pivot);
+		second_wall = partition(wall, pivot, a, s);
 
-		j = right - 1;
-		while (i < j)
+		first_wall = wall;
+		new_pivot = second_wall - 1;
+
+		if (first_wall != new_pivot && second_wall != pivot)
+			new_pivot--;
+
+		quick_sort_dup(first_wall, new_pivot, a, s);
+		quick_sort_dup(second_wall, pivot, a, s);
+	}
+}
+/**
+ * partition - divides and sorts an array into sub arrays semi-sorted
+ * @wall: beginning of array partition
+ * @pivot: end of array to partition
+ * @a: the beginning of the array, for printing purposes
+ * @s: size of entire array for printing
+ *
+ * Return: the new wall barrier
+ */
+int partition(int wall, int pivot, int *a, size_t s)
+{
+	int i;
+
+	i = wall;
+
+	while (i != pivot)
+	{
+		if (a[i] < a[pivot])
 		{
-			if (array[j] < array[pivot])
+			if (i != wall)
 			{
-				swap(array, size, i, j);
-				i++;
+				swap_int(a + i, a + wall);
+				print_array(a, s);
 			}
-			j--;
+			i++;
+			wall++;
 		}
+		else
+			i++;
 	}
-	else
-		pivot = i--;
-
-	printf("B");
-
-	swap(array, size, pivot, i - 1);
-
-	partition(array, size, left, i - 2);
-	partition(array, size, i, right);
+	if (wall != pivot)
+	{
+		if (a[wall] > a[pivot])
+		{
+			swap_int(a + pivot, a + wall);
+			print_array(a, s);
+		}
+		wall++;
+	}
+	return (wall);
 }
 
-size_t swap(int *array, size_t size, size_t idx1, size_t idx2)
+/**
+  * swap_int - swap two integers
+  * @a: integer 1
+  * @b: interger 2
+  */
+void swap_int(int *a, int *b)
 {
-	int tmp;
+	int temp;
 
-	tmp = array[idx1];
-	array[idx1] = array[idx2];
-	array[idx2] = tmp;
+	temp = *a;
 
-	print_array(array, size);
-
-	return idx1;
+	*a = *b;
+	*b = temp;
 }
