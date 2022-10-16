@@ -1,59 +1,48 @@
 #include "sort.h"
 
 /**
- * sorted_insert - insert elements into a sorted list
- * 
- * @list: pointer to the list 
- * @new_node: node to be inserted
- * Return:sorted list 
+ * get_head - Get the head of a doubly linked list
+ * @tmp: node in linked list
+ * Return: head of linked list
  */
-void sorted_insert(listint_t **list, listint_t *new_node)
+listint_t *get_head(listint_t *tmp)
 {
-    listint_t *head;
+	while (tmp->prev)
+		tmp = tmp->prev;
 
-    if (*list == NULL)
-    {
-        *list = new_node;
-    }
-    else if ((*list)->n >= new_node->n)
-    {
-        new_node->next = *list;
-        new_node->next->prev = new_node;
-        *list = new_node;
-    }
-    else{
-        head = *list;
-        while (head->next != NULL && head->next->n < new_node->n)  
-           head = head->next;
-        new_node->next = head->next;
-        if (head->next != NULL)
-        {
-            new_node->next->prev = new_node;
-        }
-        head->next = new_node;
-        new_node->prev = head; 
-    }
+	return (tmp);
 }
 
 /**
- * insertion_sort_list - sorts a doubly linked list of integer in ascending order
- * @list: pointer  to the linked list
- * Return: sorted list
+ * insertion_sort_list - Sort a doubly linked list of integers
+ * in ascending order using insertion sort algorithm.
+ * @list: doubly linked list
  */
 void insertion_sort_list(listint_t **list)
 {
-    listint_t *current; 
-    listint_t*sorted = NULL;
+	listint_t *tmp, *hold, *ptmp;
 
-    listint_t *head = *list;
-    print_list(*list);
-    while (head != NULL)
-    {
-        current = head->next;
-        head->prev = head->next = NULL;
-        sorted_insert(&sorted, head);
-        head = current;
-    }
-    *list = sorted;
-    
+	if (list == NULL)
+		return;
+	tmp = get_head(*list);
+
+	for (tmp = tmp->next; tmp;)
+	{
+		hold = tmp->next;
+		while (tmp->prev && tmp->n < tmp->prev->n)
+		{
+			ptmp = tmp->prev;
+			ptmp->next = tmp->next;
+			tmp->prev = ptmp->prev;
+			ptmp->prev = tmp;
+			tmp->next = ptmp;
+			if (ptmp->next)
+				ptmp->next->prev = ptmp;
+			if (tmp->prev)
+				tmp->prev->next = tmp;
+			print_list(get_head(*list));
+		}
+		tmp = hold;
+	}
+	*list = get_head(*list);
 }
