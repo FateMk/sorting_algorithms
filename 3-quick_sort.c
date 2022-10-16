@@ -1,61 +1,76 @@
 #include "sort.h"
-void swap(int *a, int *b)
+
+size_t swap(int *array, size_t size, size_t idx1, size_t idx2);
+void partition(int *array, size_t size, size_t left, size_t right);
+
+/**
+ * quick_sort - Sort an array of integers in ascending order
+ * Description: Use Hoare's partition scheme quicksort
+ * pivot should always be the last element of the partition being sorted.
+ * You're expected to print the array after each time you swap 2 elements.
+ */
+void quick_sort(int *array, size_t size)
 {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+	size_t lw, rw;
+
+	lw = 0;
+	rw = size - 1;
+
+	partition(array, size, lw, rw);
 }
 
- void quick_sort(int *array, size_t size)
- {
-    size_t i, j, last, first, pivot, temp;
-    first = 0;
-    last = (size -1);
-    pivot = first;
-    i = first;
-    j = last;
-
-    while (i < j)
-    {
-        while (array[i] <= array[pivot] && i < last)
-        {
-            i++;
-            if (i < j)
-            {
-                swap(&array[i], &array[j]);
-            }
-        }
-        swap(&array[pivot], &array[j]);
-        quick_sort(array, size);
-    }
- 
- }
-
- 
-void print_array(const int *array, size_t size)
+void partition(int *array, size_t size, size_t left, size_t right)
 {
-    size_t i;
+	size_t i, j, pivot;
 
-    i = 0;
-    while (array && i < size)
-    {
-        if (i > 0)
-            printf(", ");
-        printf("%d", array[i]);
-        ++i;
-    }
-    printf("\n");
+	printf("?");
+
+	if (left >= right)
+	{
+		printf("Hi");
+		return;
+	}
+
+	pivot = right;
+	while (array[i] < array[pivot] && i < pivot)
+		i++;
+
+	if (i < right)
+	{
+		printf("A");
+		pivot = swap(array, size, i, pivot);
+
+		j = right - 1;
+		while (i < j)
+		{
+			if (array[j] < array[pivot])
+			{
+				swap(array, size, i, j);
+				i++;
+			}
+			j--;
+		}
+	}
+	else
+		pivot = i--;
+
+	printf("B");
+
+	swap(array, size, pivot, i - 1);
+
+	partition(array, size, left, i - 2);
+	partition(array, size, i, right);
 }
 
- int main(void)
+size_t swap(int *array, size_t size, size_t idx1, size_t idx2)
 {
-    int array[] = {19, 48, 99, 71, 13, 52, 96, 73, 86, 7};
-    size_t n = sizeof(array) / sizeof(array[0]);
+	int tmp;
 
-    print_array(array, n);
-    printf("\n");
-    quick_sort(array, n);
-    printf("\n");
-    print_array(array, n);
-    return (0);
+	tmp = array[idx1];
+	array[idx1] = array[idx2];
+	array[idx2] = tmp;
+
+	print_array(array, size);
+
+	return idx1;
 }
